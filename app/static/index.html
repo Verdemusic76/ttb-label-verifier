@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TTB Label Verification</title>
+<style>
+  :root{
+    --ink:#161D2B; --ink2:#222B3D; --paper:#ECE9E1; --card:#fff;
+    --line:#D6D2C7; --brass:#B7892F; --muted:#8A909C;
+    --pass:#2E6B4F; --review:#B07A1E; --fail:#9B2D2D;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.45}
+  header{background:var(--ink);color:var(--paper)}
+  .bar{max-width:920px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;gap:14px}
+  .seal{width:36px;height:36px;border:2px solid var(--brass);border-radius:3px;color:var(--brass);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Georgia,serif}
+  h1{font-size:18px;margin:0}
+  .sub{font-size:12px;color:#9AA3B5;margin:0}
+  main{max-width:920px;margin:0 auto;padding:24px 20px}
+  .grid{display:grid;gap:20px}
+  @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+  .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A6A23;font-weight:600;margin:0 0 14px}
+  label.f{display:block;margin-bottom:12px}
+  label.f span{font-size:14px;color:#4A5160}
+  input[type=text]{width:100%;margin-top:5px;padding:11px 12px;border:1px solid #CDCABF;border-radius:8px;
+    background:#FBFAF6;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+  input:focus{outline:none;box-shadow:0 0 0 3px rgba(183,137,47,.35)}
+  .note{font-size:12px;color:#6B7280;background:#F4F2EC;border:1px solid #E2DFD5;border-radius:8px;padding:10px}
+  .drop{min-height:210px;width:100%;border:2px dashed #C7C3B6;border-radius:8px;background:#FBFAF6;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#3A4252}
+  .drop:hover{border-color:var(--brass)}
+  .plus{width:46px;height:46px;border-radius:50%;background:#EFE7D2;color:var(--brass);
+    display:flex;align-items:center;justify-content:center;font-size:26px}
+  .drop img{max-height:200px;border-radius:6px}
+  .run{width:100%;margin-top:20px;padding:16px;border:0;border-radius:10px;background:var(--ink);color:#fff;
+    font-size:16px;font-weight:600;cursor:pointer}
+  .run:hover{background:var(--ink2)} .run:disabled{opacity:.6;cursor:default}
+  .result{margin-top:24px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .verdict{display:flex;gap:16px;align-items:center;padding:20px;border-bottom:1px solid #E7E3D8;flex-wrap:wrap}
+  .stamp{padding:10px 22px;border:3px solid;border-radius:6px;font-family:Georgia,serif;font-weight:700;
+    font-size:24px;letter-spacing:.04em;transform:rotate(-6deg)}
+  .row{padding:14px 20px;border-top:1px solid #EFEBE0;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+  .row:first-child{border-top:0}
+  .field{font-weight:600;font-size:14px} .rownote{font-size:12px;color:var(--muted);margin-top:2px}
+  .vals{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;margin-top:6px;color:#374151}
+  .vals .k{color:#A7AAB2}
+  .chip{font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;border:1px solid;white-space:nowrap}
+  .pass{color:var(--pass);border-color:var(--pass);background:#E4EEE7}
+  .review{color:#8A5E12;border-color:var(--review);background:#F6ECD6}
+  .fail{color:#8C2A2A;border-color:var(--fail);background:#F3E0DE}
+  .decide{padding:20px;background:#FAF8F2;border-top:1px solid #E7E3D8}
+  .decide button{padding:11px 18px;border:0;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px}
+  .err{margin-top:16px;border:1px solid var(--fail);background:#F6E4E2;color:#7E2424;font-size:14px;padding:12px 16px;border-radius:8px}
+  .foot{text-align:center;color:#9AA3B5;font-size:12px;margin-top:32px}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="seal">TTB</div>
+  <div style="flex:1"><h1>Label Verification</h1><p class="sub">Alcohol beverage label review · prototype</p></div>
+</div></header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <p class="eyebrow">Application record</p>
+      <label class="f"><span>Brand name</span><input type="text" id="brand_name" value="OLD TOM DISTILLERY"></label>
+      <label class="f"><span>Class / type</span><input type="text" id="class_type" value="Kentucky Straight Bourbon Whiskey"></label>
+      <label class="f"><span>Alcohol content</span><input type="text" id="alcohol_content" value="45% Alc./Vol. (90 Proof)"></label>
+      <label class="f"><span>Net contents</span><input type="text" id="net_contents" value="750 mL"></label>
+      <label class="f"><span>Producer name / address</span><input type="text" id="producer_name_address" value="Old Tom Distillery, Bardstown, KY"></label>
+      <label class="f"><span>Country of origin (imports)</span><input type="text" id="country_of_origin" placeholder="Leave blank if domestic"></label>
+      <p class="note">Government warning is checked verbatim against 27 CFR §16.21 — not against this form.</p>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">Label image</p>
+      <div class="drop" id="drop">
+        <div class="plus">+</div>
+        <strong style="font-size:14px">Add a label photo</strong>
+        <span style="font-size:12px;color:var(--muted)">Tap to choose · JPG or PNG</span>
+      </div>
+      <input type="file" id="file" accept="image/*" hidden>
+    </section>
+  </div>
+
+  <button class="run" id="run">Run verification</button>
+  <div id="error"></div>
+  <div id="out"></div>
+  <p class="foot">Prototype · AI reads the label, deterministic rules check it, the agent decides.</p>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const FIELDS = ["brand_name","class_type","alcohol_content","net_contents","producer_name_address","country_of_origin"];
+const VERDICT = {
+  approve:{word:"APPROVED",color:"#2E6B4F",sub:"Recommended — pending agent sign-off"},
+  review:{word:"FOR REVIEW",color:"#B07A1E",sub:"One or more fields need a human eye"},
+  reject:{word:"REJECTED",color:"#9B2D2D",sub:"Recommended — a required field failed"},
+};
+let picked = null;
+
+$("drop").onclick = () => $("file").click();
+$("file").onchange = (e) => {
+  picked = e.target.files[0];
+  if (!picked) return;
+  const url = URL.createObjectURL(picked);
+  $("drop").innerHTML = `<img src="${url}" alt="Selected label">`;
+};
+
+$("run").onclick = async () => {
+  $("error").innerHTML = ""; $("out").innerHTML = "";
+  if (!picked) { $("error").innerHTML = '<div class="err">Add a label image first.</div>'; return; }
+  const btn = $("run"); btn.disabled = true; btn.textContent = "Reading the label…";
+  const fd = new FormData();
+  fd.append("label", picked);
+  FIELDS.forEach((f) => fd.append(f, $(f).value));
+  try {
+    const res = await fetch("/verify", { method: "POST", body: fd });
+    if (!res.ok) throw new Error((await res.json()).detail || ("Service returned " + res.status));
+    render(await res.json());
+  } catch (e) {
+    $("error").innerHTML = '<div class="err">' + e.message + "</div>";
+  } finally {
+    btn.disabled = false; btn.textContent = "Run verification";
+  }
+};
+
+function render(p) {
+  const v = VERDICT[p.verdict];
+  const rows = p.findings.map((f) => `
+    <div class="row">
+      <div>
+        <div class="field">${f.field}</div>
+        <div class="rownote">${f.note}</div>
+        <div class="vals"><span class="k">record </span>${esc(f.expected)} &nbsp; <span class="k">label </span>${esc(f.found)}</div>
+      </div>
+      <span class="chip ${f.status}">${({pass:"Match",review:"Review",fail:"Mismatch"})[f.status]}</span>
+    </div>`).join("");
+  $("out").innerHTML = `
+    <div class="result">
+      <div class="verdict">
+        <div class="stamp" style="color:${v.color};border-color:${v.color}">${v.word}</div>
+        <div><div style="font-size:14px;color:#4A5160">${v.sub}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Read and checked in ${p.elapsed_seconds}s · reader: ${p.extractor}</div></div>
+      </div>
+      ${rows}
+      <div class="decide" id="decide">
+        <div style="font-size:14px;color:#4A5160;margin-bottom:12px">The tool recommends — you decide. Record the determination:</div>
+        <button style="background:#2E6B4F" onclick="decide('Approved')">Approve</button>
+        <button style="background:#B07A1E" onclick="decide('Sent for review')">Send for review</button>
+        <button style="background:#9B2D2D" onclick="decide('Rejected')">Reject</button>
+      </div>
+    </div>`;
+}
+function decide(d){ $("decide").innerHTML = '<div style="font-size:14px;color:#2E6B4F;font-weight:600">Determination recorded: '+d+' · by agent</div>'; }
+function esc(s){ return String(s==null?"—":s).replace(/[&<>]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+</script>
+</body>
+</html>

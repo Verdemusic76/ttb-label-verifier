@@ -1,0 +1,15 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+python-multipart>=0.0.9
+
+# Vision extractor (default). Omit if deploying local-OCR only.
+anthropic>=0.40
+
+# Local-OCR extractor (firewalled/air-gapped deployments). Requires the
+# system package `tesseract-ocr` to be installed in the image as well.
+pytesseract>=0.3.10
+Pillow>=10.2
+
+# Tests
+pytest>=8.0
